@@ -37,8 +37,6 @@ public class BasePage {
     protected WebElement sendKeysToField(WebElement element, String value) {
     	element.click();
     	element.clear();
-    	//js.executeScript("$element.val('" + value + "')");
-    	//js.executeScript("element.setAttribute('input', value)");
     	element.sendKeys(value);
     	return element;
         
@@ -77,5 +75,7 @@ public class BasePage {
 		sendKeysToField(element, value);
 		return element;
 	}
+	
+	
 	
 }
