@@ -34,6 +34,9 @@ public class SearchPage  extends BasePage{
 	@FindBy(xpath = "//div[contains(@class,'product-buy__price_active')]")
 	private WebElement priceLabel;
 	
+	@FindBy(xpath = "//div[contains(@class,'product-buy__price_active')]/span[@class='product-buy__prev']")
+	private WebElement priceLabel2;
+	
 	//Кнопка "Корзина"
 	@FindBy(xpath = "//a[contains(@class,'cart-link')]/span[contains(@class,'cart-link__lbl')]")
 	private WebElement cartButton;
@@ -73,8 +76,9 @@ public class SearchPage  extends BasePage{
 	//Возвращает цену товара
 	private String getPrice() {
 		waitUntilElementToBeVisible(priceLabel);
-		return priceLabel.getText();
-		
+		String wholePrice = priceLabel.getText().replaceAll("[^0-9]","");
+		String oldPrice = priceLabel2.getText().replaceAll("[^0-9]","");
+		return wholePrice.replace(oldPrice, "");
 	}
 	
 	//Возвращает имя товара
