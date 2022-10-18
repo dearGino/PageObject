@@ -15,16 +15,20 @@ public class CartPage extends BasePage{
 	@FindBy(xpath = "//div[contains(@class,'product-name')]")
 	private WebElement productsNameInCart;
 
+	//Стоимость товаров в корзине
+	@FindBy(xpath = "//span[contains(@class, 'buttons__link-price cart-link__price')]")
+	private WebElement productsPriceInChart;
+	
+	//Добавочный путь ко кнопке Удалить у каждого товара в корзине
+	private String deleteButtonPattern = "//button[@class='menu-control-button remove-button']";
+	
 	//Добавочный путь к страховке элемента, если есть
-	private String warrantyCommonWraper = "//../../../../../../div[contains(@class,'additional-warranties')]/div[@class = 'additional-warranties-row__warranties']/*/div[@class='slider']/*";
+	private String warrantyCommonPattern = "//../../../../../../div[contains(@class,'additional-warranties')]/div[@class = 'additional-warranties-row__warranties']/*/div[@class='slider']/*";
 
-	//@FindBy(xpath = "//div[contains(@class,'additional-warranties-row__warranty')]/*")
 	private String warrantyRegular = "//div[contains(@class,'additional-warranties-row__warranty')]";
 	
-	//@FindBy(xpath = "//div[contains(@class,'additional-warranties-row__hit-warranty additional-warranties-row__warranty')]/*")
 	private String warranty12 = "//div[contains(@class,'additional-warranties-row__hit-warranty additional-warranties-row__warranty')]";
 	
-	//@FindBy(xpath = "//div[contains(@class,'additional-warranties-row__warranty')]/*")
 	private String warranty24 = "//div[contains(@class,'additional-warranties-row__warranty')]";
 	
 	
@@ -33,7 +37,7 @@ public class CartPage extends BasePage{
 		WebElement warranty;
 		try {
 			warranty = getElementByName(productName)
-					.findElement(By.xpath(warrantyCommonWraper));
+					.findElement(By.xpath(warrantyCommonPattern));
 		}
 		catch (Exception exp) {
 			System.out.println("У элемента не предусмотрена гарантия");
@@ -41,7 +45,7 @@ public class CartPage extends BasePage{
 		finally {
 			waitUntilElementToBeVisible(productsNameInCart);
 			warranty = getElementByName(productName)
-					.findElement(By.xpath(warrantyCommonWraper));
+					.findElement(By.xpath(warrantyCommonPattern));
 		}
 		boolean warranty12CartProduct = products.getProductWarranty12(productName);
 		boolean warranty24CartProduct = products.getProductWarranty24(productName);
@@ -60,30 +64,68 @@ public class CartPage extends BasePage{
 		return this;
 	}
 	
+	
+	public CartPage deleteProductByName(String productName) throws InterruptedException {
+		WebElement producToDelete;
+		try {
+			producToDelete = getElementByName(productName)
+					.findElement(By.xpath(deleteButtonPattern));
+		}
+		catch (Exception exp) {
+			System.out.println("У элемента не предусмотрена гарантия");
+		}
+		finally {
+			waitUntilElementToBeVisible(productsNameInCart);
+			producToDelete = getElementByName(productName)
+					.findElement(By.xpath(deleteButtonPattern));
+		}
+		int cartPriceBefore = convertStringToInt(checkCartPrice());
+		int productToDeletePrice = convertStringToInt(products.getProductPrice(productName));
+		scrollToElementJs(producToDelete);
+		clickOnElementJs(producToDelete);
+		scrollUpThePageJs(productsPriceInChart);
+		products.removeProductFromCartByName(productName);
+
+		int cartPriceAfter = convertStringToInt(checkCartPrice());
+		System.out.println(cartPriceBefore);
+		System.out.println(productToDeletePrice);
+		System.out.println(cartPriceAfter);
+		Assert.assertTrue("Стоимость корзины после удаления товара изменилась неправильно",
+				cartPriceAfter == cartPriceBefore-productToDeletePrice);
+		return this;
+	}
+	
+	
 	private WebElement getElementByName (String name) {
-		String elementXpath = "/*[contains(.,'" + name + "')]";
+		String elementXpath = "//a[contains(.,'" + name + "')]";
 		WebElement element;
 		try {
-			element = productsNameInCart.findElement(By.xpath(elementXpath));
+			element = productsWrap.findElement(By.xpath(elementXpath));
 			}
 		catch (Exception exp) {
 			System.out.println("Такого товара нет в корзине");
 		}
 		finally {
 			waitUntilElementToBeClickable(productsNameInCart);
-			element = productsNameInCart.findElement(By.xpath(elementXpath));
+			element = productsWrap.findElement(By.xpath(elementXpath));
 		}
 		waitUntilElementToBeClickable(element);
 		return element;
 	}
-
+	
+	
+	public String checkCartPrice () {
+		return productsPriceInChart.getText();
+	}
+	
+	private int convertStringToInt (String stringValue) {
+		int intValue = 0;
+		try {
+			intValue = Integer.parseInt(stringValue.replaceAll("[^0-9]", ""));			}
+		catch (NumberFormatException e) {
+			   System.out.println("Ошибка конвертации цены из String в Int");
+			}
+		return intValue;
+	}
 	
 }
-//название товара
-//a[contains(@class, 'base-ui-link base-ui-link_gray_dark')]
-
-//div[contains(@class,'product-name')]/*
-//название товара
-
-// доп гарантия внутри где-то 
-//div[contains(@class,'cart-items__additionals')]/*
