@@ -85,13 +85,13 @@ public class ProductCardPage extends BasePage {
 		return pageManager.getSearchPage().setSearchWord(value);
 	}
 	
-	public String getPrice() {
+	private String getPrice() {
 		waitUntilElementToBeVisible(priceLabel);
 		return priceLabel.getText();
 		
 	}
 		
-	public boolean is12warranty () {
+	private boolean is12warranty () {
 		try {
 			String warranty = warrantyChosen.getAttribute("value");
 			if (warranty == "Гарантия: 12 мес. " || warranty == "Гарантия: 36 мес.")
@@ -106,7 +106,7 @@ public class ProductCardPage extends BasePage {
 		
 	}
 	
-	public boolean is24warranty () {
+	private boolean is24warranty () {
 		try {
 			String warranty = warrantyChosen.getAttribute("value");
 			if (warranty == "Гарантия: 12 мес. " || warranty == "Гарантия: 24 мес.")

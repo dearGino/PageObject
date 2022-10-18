@@ -7,26 +7,34 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class SearchPage  extends BasePage{
 	
-	protected String searchValue;
+	//Искомый запрос
+	private String searchValue;
 	
+	//Элемент - всех результатов поиска
 	@FindBy(xpath = "//div[@class=\"products-list__content\"]/*/*/a[contains(@class, 'catalog-product__name')]")
 	private WebElement parentElement;
 	
+	//Поисковое поле
 	@FindBy(xpath = "//div[contains(@class, 'header-menu-wrapper')]/*/*/input[contains(@type,'search')]")
 	private WebElement searchField;
 	
+	//Кнопка "Купить"
 	@FindBy(xpath = "//button[contains(@class,'buy-btn')]")
 	private WebElement buyButton;
 	
+	//Кнопка "В корзине" (Измененённая кнопка "Купить")
 	@FindBy(xpath = "//button[contains(@class,'buy-btn') and contains(.,'В корзине')]")
 	private WebElement boughtButton;
 	
+	//Название товара
 	@FindBy(xpath = "//a[contains(@class,'catalog-product__name ui-link ui-link_black')]/*")
 	private WebElement productName;
 		
+	//Цена товара
 	@FindBy(xpath = "//div[contains(@class,'product-buy__price_active')]")
 	private WebElement priceLabel;
 	
+	//Кнопка "Корзина"
 	@FindBy(xpath = "//a[contains(@class,'cart-link')]/span[contains(@class,'cart-link__lbl')]")
 	private WebElement cartButton;
 	
@@ -34,12 +42,15 @@ public class SearchPage  extends BasePage{
 	public SearchPage() {
 	}
 
+	//Передает странице искомый запрос
+	//Запрос не сохраняется в поле поиска => оттуда его не извлечь
 	public SearchPage setSearchWord(String value) {
 		this.searchValue = value;
 		return this;
 	}
 	
-
+	// Нажать на товар в результатах поиска
+	//Открывает страницу карточки товара
 	public ProductCardPage chooseProductInCatalogue () {
 		waitUntilElementToBeVisible(parentElement);
 		String elementXpath = "//span[contains(.,'" + searchValue + "')]";
@@ -49,6 +60,7 @@ public class SearchPage  extends BasePage{
 		return pageManager.getProductCardPage();
 	}
 	
+	//Добавить товар в корзину прямо из результатов поиска
 	public SearchPage putProductInCart (){
 		scrollUpThePageJs(buyButton);
 		waitUntilElementToBeVisible(buyButton);
@@ -57,18 +69,21 @@ public class SearchPage  extends BasePage{
 		waitUntilElementToBeVisible(boughtButton);
 		return this;
 	}
-		
-	public String getPrice() {
+	
+	//Возвращает цену товара
+	private String getPrice() {
 		waitUntilElementToBeVisible(priceLabel);
 		return priceLabel.getText();
 		
 	}
 	
-	public String getName() {
+	//Возвращает имя товара
+	private String getName() {
 		String name = productName.getText();
 		return name.split("\\[")[0];
 	}
 	
+	//Перейти в корзину
 	public CartPage hitCartButton () {
 		waitUntilElementToBeClickable(cartButton).click();
 		return pageManager.getCartPage();

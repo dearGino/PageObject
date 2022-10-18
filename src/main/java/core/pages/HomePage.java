@@ -6,12 +6,16 @@ import org.openqa.selenium.support.FindBy;
 
 public class HomePage extends BasePage {
 
+	//Поисковое поле
 	@FindBy(xpath = "//div[contains(@class, 'header-menu-wrapper')]/*/*/input[contains(@type,'search')]")
 	private WebElement searchField;
 	
+	
+	//Кнопка "Найти", чтобы начать поиск
 	@FindBy(xpath = "//div[contains(@class, 'header-menu')]/*/*/*/span[contains(@class, 'icon_search')]")
 	private WebElement searchButton;
 	
+	//Заголовок страницы
 	@FindBy(xpath = "//title[contains(.,'DNS – интернет магазин цифровой и бытовой техники')]")
 	private WebElement title;
 	
